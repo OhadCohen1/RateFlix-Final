@@ -1,10 +1,6 @@
 import type { Item } from '../types';
 
-/**
- * Local mock catalog for rendering and testing when the API is unreachable.
- * The HomeScreen falls back to this list (with a visible notice) so the UI
- * can always be developed and demoed offline.
- */
+// נתוני דמו מקומיים לשימוש כשאין חיבור לשרת.
 export const mockItems: Item[] = [
   {
     id: 'mock-1',

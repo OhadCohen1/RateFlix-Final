@@ -6,7 +6,7 @@ export interface User {
   role: UserRole;
 }
 
-/** A catalog item (movie) as the UI consumes it */
+/** פריט קטלוג (סרט) כמו שה-UI צורך */
 export interface Item {
   id: string;
   name: string;
@@ -19,7 +19,7 @@ export interface Item {
   ratingCount: number;
   createdAt: string;
   tags: string[];
-  /** Present only on items returned by the recommendations engine */
+  /** מופיע רק בפריטים ממנוע ההמלצות */
   predictedScore?: number;
 }
 
@@ -48,7 +48,7 @@ export interface MyRating {
   movie: { id: string; title: string; imageUrl?: string };
 }
 
-/** One row in the community users list (recommendations screen) */
+/** שורה אחת ברשימת משתמשי הקהילה */
 export interface UserSummary {
   id: string;
   email: string;

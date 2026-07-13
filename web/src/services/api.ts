@@ -5,7 +5,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:50
 export const TOKEN_STORAGE_KEY = 'rateflix_token';
 export const USER_STORAGE_KEY = 'rateflix_user';
 
-/** Query-string params; undefined values are omitted */
+/** פרמטרים ל-query string; ערכים ריקים לא נשלחים */
 export type QueryParams = Record<string, string | undefined>;
 
 const buildUrl = (path: string, params?: QueryParams): string => {
@@ -17,12 +17,7 @@ const buildUrl = (path: string, params?: QueryParams): string => {
   return `${API_BASE_URL}${path}${qs ? `?${qs}` : ''}`;
 };
 
-/**
- * Thin fetch wrapper (native fetch, like the course client code):
- * appends the JWT Bearer token automatically, unwraps the
- * { success, data } envelope and throws an Error carrying the
- * server's { error } message on failure.
- */
+/** עטיפה דקה ל-fetch עם token וטיפול שגיאות אחיד */
 const request = async <T>(
   method: string,
   path: string,
@@ -33,7 +28,7 @@ const request = async <T>(
   const token = localStorage.getItem(TOKEN_STORAGE_KEY);
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  // For FormData the browser sets the multipart Content-Type (with boundary) itself
+  // ב-FormData הדפדפן קובע Content-Type לבד.
   const isForm = options.body instanceof FormData;
   if (options.body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
 

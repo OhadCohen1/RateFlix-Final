@@ -1,6 +1,4 @@
-// Unit tests for the KNN engine (proposal section 14.2):
-// calculateCosineSimilarity is verified against hand-computed known values.
-// Runs on the compiled output: npm test (build + node --test)
+// בדיקות KNN על מקרי קצה ותוצאות צפויות.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { calculateCosineSimilarity, getRecommendations } from '../dist/services/KNNService.js';
@@ -15,7 +13,7 @@ test('vectors with no shared items have similarity 0', () => {
 });
 
 test('known value: A=(1,2), B=(2,1) -> 4/5 = 0.8', () => {
-  // dot = 1*2 + 2*1 = 4; ||A|| = ||B|| = sqrt(5); 4/5 = 0.8
+  // חישוב ידני קצר כדי לוודא שלא פספסנו בנוסחה.
   const sim = calculateCosineSimilarity({ m1: 1, m2: 2 }, { m1: 2, m2: 1 });
   assert.ok(Math.abs(sim - 0.8) < 1e-9);
 });
@@ -59,7 +57,7 @@ test('single user in the matrix gets an empty list', () => {
 });
 
 test('predicted score is the similarity-weighted average of neighbor ratings', () => {
-  // Single neighbor with similarity > 0: prediction equals the neighbor's score
+  // עם שכן אחד רלוונטי, התחזית אמורה לצאת בדיוק כמו הציון שלו.
   const twoUsers = { u1: { a: 5 }, u2: { a: 5, b: 3 } };
   const recs = getRecommendations('u1', twoUsers, 3);
   assert.equal(recs.length, 1);
@@ -68,8 +66,7 @@ test('predicted score is the similarity-weighted average of neighbor ratings', (
 });
 
 test('k limits which neighbors contribute', () => {
-  // "far" is a valid neighbor (similarity > 0) but the least similar of the
-  // three - with k=2 only the two close users may contribute items
+  // 'far' דומה קצת, אבל עם k=2 אנחנו רוצים רק את הקרובים באמת.
   const kMatrix = {
     target: { m1: 5, m2: 5 },
     close1: { m1: 5, m2: 5, m3: 4 },

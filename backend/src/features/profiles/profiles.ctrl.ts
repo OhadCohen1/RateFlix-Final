@@ -12,9 +12,7 @@ const requireUserId = (req: Request): string => {
   return userId;
 };
 
-// GET /api/profile  (protected)
-// Everything the profile screen needs in one call:
-// account info, personal details, rating stats and the user's rating history
+// כל הנתונים למסך פרופיל בבקשה אחת.
 export const getMyProfile = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
 
@@ -31,8 +29,7 @@ export const getMyProfile = async (req: Request, res: Response): Promise<void> =
 
   if (!user) throw new ApiError(404, 'User not found');
 
-  // Stats for the profile header: total ratings, personal average,
-  // and how many distinct categories the user has rated in
+  // סטטיסטיקות קצרות לכותרת הפרופיל.
   const ratedCategoryIds = new Set<string>();
   let scoreSum = 0;
   for (const r of ratings) {
@@ -71,7 +68,7 @@ interface ProfileBody {
   avatarUrl?: string;
 }
 
-// PUT /api/profile  (protected) - creates the profile on first save (upsert)
+// עדכון פרופיל (נוצר אוטומטית אם עוד לא קיים).
 export const updateMyProfile = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const { firstName, lastName, phoneNumber, avatarUrl } = req.body as ProfileBody;

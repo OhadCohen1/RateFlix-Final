@@ -8,7 +8,7 @@ export interface User {
   createdAt?: string;
 }
 
-/** A catalog item (movie) as the UI consumes it */
+/** פריט קטלוג (סרט) כמו שה-UI צורך */
 export interface Item {
   id: string;
   name: string;
@@ -22,7 +22,7 @@ export interface Item {
   createdBy?: string;
   createdAt: string;
   tags: string[];
-  /** Present only on items returned by the recommendations engine */
+  /** קיים רק בפריטים שחזרו ממנוע ההמלצות */
   predictedScore?: number;
 }
 
@@ -55,7 +55,7 @@ export interface ProfileStats {
   categoriesCount: number;
 }
 
-/** One entry in the user's rating history (profile screen) */
+/** רשומה אחת בהיסטוריית הדירוגים של המשתמש */
 export interface MyRating {
   id: string;
   score: number;

@@ -1,6 +1,4 @@
-// Unit tests for password security (proposal section 14.2):
-// verifies bcrypt hashing so passwords are never stored as plain text.
-// Uses a dedicated test database (rateflix_test) - safe to run repeatedly.
+// בדיקה קצרה: הסיסמה נשמרת כהאש ולא בטקסט גלוי.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import mongoose from 'mongoose';

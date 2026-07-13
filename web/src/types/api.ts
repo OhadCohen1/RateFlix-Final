@@ -1,9 +1,6 @@
 import type { User, Profile, ProfileStats, MyRating, AdminStats } from './index';
 
-/**
- * Standard API envelope (matches the course response.builder):
- * { success, data, timestamp } on success / { success, error, timestamp } on failure
- */
+/** מעטפת תשובה אחידה מהשרת */
 export interface ApiEnvelope<T> {
   success: boolean;
   data: T;
@@ -11,7 +8,7 @@ export interface ApiEnvelope<T> {
   timestamp: string;
 }
 
-/** Movie document exactly as the backend returns it */
+/** מסמך סרט כמו שחוזר מהבקאנד */
 export interface ApiMovie {
   _id: string;
   title: string;
@@ -21,10 +18,10 @@ export interface ApiMovie {
   imageUrl?: string;
   tags?: string[];
   createdAt: string;
-  /** Aggregated by the catalog endpoint */
+  /** מחושב באגרגציה של הקטלוג */
   avgRating?: number;
   ratingCount?: number;
-  /** Only present on /recommendations responses */
+  /** מופיע רק בתשובת המלצות */
   predictedScore?: number;
 }
 

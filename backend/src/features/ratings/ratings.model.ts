@@ -28,10 +28,10 @@ const ratingSchema = new Schema<IRating>({
   },
 });
 
-// A user can rate a given movie only once (update instead of duplicate)
+// לכל משתמש מותר דירוג אחד לכל סרט.
 ratingSchema.index({ userId: 1, itemId: 1 }, { unique: true });
 
-// Keep updatedAt current on every save
+// מעדכן updatedAt בכל שמירה.
 ratingSchema.pre('save', function (): void {
   this.updatedAt = new Date();
 });

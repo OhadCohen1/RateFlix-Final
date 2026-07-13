@@ -1,10 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 
-/**
- * Request logger - prints one line per request with method, path,
- * response status and duration, e.g.:
- *   GET /api/movies -> 200 (14ms)
- */
+// לוג קצר לכל בקשה: מתודה, נתיב, סטטוס וזמן.
 export const logger = (req: Request, res: Response, next: NextFunction): void => {
   const startedAt = Date.now();
 

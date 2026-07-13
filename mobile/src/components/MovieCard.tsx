@@ -5,12 +5,12 @@ import StarRating from './StarRating';
 
 interface MovieCardProps {
   item: Item;
-  /** The score this user gave the item (if any) */
+  /** הציון שהמשתמש נתן (אם קיים) */
   userScore?: number;
-  /** When provided, the "my rating" stars are tappable */
+  /** אם נשלח handler, דירוג הכוכבים לחיץ */
   onRate?: (itemId: string, score: number) => void;
   onDeleteRating?: (itemId: string) => void;
-  /** Recommendations variant: rank badge + match percentage bar */
+  /** מצב המלצות: תג מיקום + פס התאמה */
   rank?: number;
 }
 
@@ -20,7 +20,7 @@ const MovieCard = ({ item, userScore, onRate, onDeleteRating, rank }: MovieCardP
 
   return (
     <View style={styles.card}>
-      {/* Poster */}
+      {/* פוסטר */}
       <View style={styles.posterWrap}>
         {item.imageUrl ? (
           <Image source={{ uri: item.imageUrl }} style={styles.poster} resizeMode="cover" />
@@ -36,7 +36,7 @@ const MovieCard = ({ item, userScore, onRate, onDeleteRating, rank }: MovieCardP
         )}
       </View>
 
-      {/* Details (right-aligned, Hebrew) */}
+      {/* פרטים */}
       <View style={styles.details}>
         <Text style={styles.title} numberOfLines={1}>
           {item.name}
@@ -58,7 +58,7 @@ const MovieCard = ({ item, userScore, onRate, onDeleteRating, rank }: MovieCardP
         )}
 
         {rank !== undefined ? (
-          /* Match bar (recommendations variant) */
+          /* פס התאמה במצב המלצות */
           <View style={styles.matchWrap}>
             <Text style={styles.matchText}>{matchPercent}% התאמה</Text>
             <View style={styles.matchTrack}>

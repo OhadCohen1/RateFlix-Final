@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { MAX_STARS } from '../theme';
 
 interface StarRatingProps {
-  /** Current value (user's rating or average) */
+  /** ערך נוכחי (דירוג אישי או ממוצע) */
   value: number;
-  /** When provided, the stars are interactive */
+  /** אם נשלח handler, הכוכבים לחיצים */
   onChange?: (score: number) => void;
   disabled?: boolean;
 }

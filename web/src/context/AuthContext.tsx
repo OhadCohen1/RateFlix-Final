@@ -25,7 +25,7 @@ const readStoredUser = (): User | null => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Session survives page refresh via localStorage
+  // שומרים סשן ב-localStorage כדי לשרוד רענון.
   const [user, setUser] = useState<User | null>(readStoredUser);
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem(TOKEN_STORAGE_KEY)

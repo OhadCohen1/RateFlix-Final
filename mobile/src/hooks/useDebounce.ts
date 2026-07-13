@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 
-/**
- * Returns a value that only updates after it stopped changing for `delayMs`.
- * Used to avoid firing a network request on every keystroke while typing.
- */
+// מחזיר ערך מעוכב כדי לא להציף קריאות בזמן הקלדה.
 export const useDebounce = <T>(value: T, delayMs = 250): T => {
   const [debounced, setDebounced] = useState(value);
 

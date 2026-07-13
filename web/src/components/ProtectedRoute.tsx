@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  /** Restricts the route to admins only */
+  /** מגביל את הנתיב לאדמינים בלבד */
   adminOnly?: boolean;
 }
 

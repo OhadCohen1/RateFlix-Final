@@ -1,7 +1,7 @@
 import type { ApiMovie, ApiRating, ApiCategory, ApiMyRating } from '../types/api';
 import type { Item, Rating, Category, MyRating } from '../types';
 
-/** Converts a backend movie document to the Item shape the UI renders */
+/** ממפה מסמך סרט מה-API לצורת Item של ה-UI */
 export const mapMovieToItem = (movie: ApiMovie): Item => ({
   id: movie._id,
   name: movie.title,

@@ -11,7 +11,7 @@ const tabIcon = (emoji: string) =>
 export default function TabsLayout() {
   const { user, initializing } = useAuth();
 
-  // Wait for the persisted session to restore before deciding where to go
+  // מחכים לשחזור הסשן לפני שמחליטים לאן לנתב.
   if (initializing) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }}>

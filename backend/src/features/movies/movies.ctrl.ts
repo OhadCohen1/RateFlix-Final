@@ -20,9 +20,7 @@ interface RatingAggregation {
   ratingsCount: number;
 }
 
-// GET /api/movies?search=...&category=...&sort=newest|rating|popular|year
-// Full catalog view with search, category filtering and sorting.
-// Each movie is enriched with its aggregated avgRating + ratingCount.
+// קטלוג סרטים עם חיפוש, סינון ומיון.
 export const getMovies = async (req: Request, res: Response): Promise<void> => {
   const search = typeof req.query.search === 'string' ? req.query.search : undefined;
   const category = typeof req.query.category === 'string' ? req.query.category : undefined;
@@ -85,10 +83,7 @@ interface CreateMovieBody {
   categoryId?: string;
 }
 
-// POST /api/movies  (admin only, multipart/form-data with an "image" file field)
-// 1. Streams the poster image to Cloudinary and takes the secure URL
-// 2. Asks Google Gemini for a 2-sentence Hebrew synopsis + 3 tags
-// 3. Saves the complete movie document
+// יצירת סרט חדש (אדמין).
 export const createMovie = async (req: Request, res: Response): Promise<void> => {
   const { title, categoryId } = req.body as CreateMovieBody;
 
@@ -102,14 +97,13 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
       const uploadResult = await uploadImageBuffer(req.file.buffer);
       imageUrl = uploadResult.secure_url;
     } catch (error) {
-      // Poster upload must not block catalog management (e.g. Cloudinary not configured).
-      // Note: cloudinary errors are plain objects, not Error instances.
+      // אם העלאת פוסטר נכשלה, ממשיכים בלי לעצור את היצירה.
       const message = error instanceof Error ? error.message : JSON.stringify(error);
       console.warn(`Cloudinary upload failed for "${title}": ${message}`);
     }
   }
 
-  // categoryId references a Category document - ignore free-text values that are not ObjectIds
+  // אם categoryId לא תקין, מתעלמים ממנו.
   const validCategoryId =
     categoryId && Types.ObjectId.isValid(categoryId) ? categoryId : undefined;
   if (categoryId && !validCategoryId) {
@@ -123,14 +117,14 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
     description = metadata.synopsis;
     tags = metadata.tags;
   } catch (error) {
-    // AI enrichment must not block catalog management - fall back to manual input
+    // גם אם AI נופל, שומרים את הסרט עם הנתונים הידניים.
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`Gemini metadata generation failed for "${title}": ${message}`);
   }
 
   const movie = await Movie.create({ title, description, categoryId: validCategoryId, imageUrl, tags });
 
-  // Include the category name so the client can render the new card immediately
+  // מחזירים גם שם קטגוריה לרינדור מיידי בצד לקוח.
   const category = validCategoryId ? await Category.findById(validCategoryId) : null;
 
   res.status(201).json(buildSuccessResponse({
@@ -138,9 +132,7 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
   }));
 };
 
-// DELETE /api/movies/:id  (admin only)
-// Removes the movie together with its ratings and favorites (no orphans),
-// and invalidates the recommendations matrix since ratings changed
+// מחיקת סרט והניקוי הנלווה.
 export const deleteMovie = async (req: Request, res: Response): Promise<void> => {
   const movie = await Movie.findByIdAndDelete(req.params.id);
   if (!movie) {

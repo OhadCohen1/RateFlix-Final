@@ -1,21 +1,17 @@
-/**
- * RateFlix mobile theme - dark, red-led palette matching the web app
- * (Netflix-style: near-black surfaces, brand-red actions, amber stars).
- * Surface values mirror the web design tokens in web/src/index.css.
- */
+// טוקני עיצוב למובייל, תואמים לקו של הווב.
 export const colors = {
-  primary: '#E50914', // brand red (web --color-brand-500)
-  primaryDark: '#F6323D', // readable red for text over primarySoft (web brand-400)
-  primarySoft: '#2A1215', // dark red tint for soft backgrounds
-  accent: '#F59E0B', // recommendations highlight (amber)
+  primary: '#E50914', // אדום מותג
+  primaryDark: '#F6323D', // אדום בהיר לטקסט
+  primarySoft: '#2A1215', // רקע אדום כהה
+  accent: '#F59E0B', // הדגשה להמלצות
   accentSoft: '#2B2010',
-  bg: '#0A0A0C', // web surface-950
-  card: '#131318', // web surface-900
-  border: '#2B2B36', // web surface-700
+  bg: '#0A0A0C', // רקע ראשי
+  card: '#131318', // רקע כרטיס
+  border: '#2B2B36', // צבע מסגרת
   text: '#F4F4F5',
   textMuted: '#A1A1AA',
   textFaint: '#71717A',
-  textDark: '#1A1A1E', // text over light badges (e.g. the yellow admin badge)
+  textDark: '#1A1A1E', // טקסט על תגיות בהירות
   star: '#FBBF24',
   starEmpty: '#3F3F46',
   danger: '#F6323D',

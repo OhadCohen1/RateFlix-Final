@@ -25,8 +25,7 @@ const Chip = ({ label, active, onPress }: ChipProps) => (
 const styles = StyleSheet.create({
   chip: {
     height: CHIP_HEIGHT,
-    // iOS clips inner content when borderRadius exceeds half the height -
-    // keep it exactly height/2 so the label stays visible
+    // ב-iOS אם הרדיוס גדול מדי הטקסט נחתך, אז שומרים חצי גובה בדיוק.
     borderRadius: CHIP_HEIGHT / 2,
     paddingHorizontal: 14,
     alignItems: 'center',

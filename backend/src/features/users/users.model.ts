@@ -18,7 +18,7 @@ const userSchema = new Schema<IUser, UserModelType, IUserMethods>({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false, // never returned in queries unless explicitly requested
+    select: false, // מוסתר כברירת מחדל בשאילתות
   },
   role: {
     type: String,
@@ -35,14 +35,14 @@ const userSchema = new Schema<IUser, UserModelType, IUserMethods>({
   },
 });
 
-// Hash the password before saving (only when it was created/changed)
+// מצפין סיסמה רק אם היא נוספה או שונתה.
 userSchema.pre('save', async function (): Promise<void> {
   if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Compares a plain-text candidate against the stored hash
+// משווה סיסמה רגילה להאש שנשמר.
 userSchema.methods.matchPassword = function (candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };

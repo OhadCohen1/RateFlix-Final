@@ -1,5 +1,4 @@
-// Side-effect import: under ESM all imports are evaluated in order, so this
-// loads .env before any module (e.g. cloudinary) reads process.env
+// טוען env ממש בהתחלה כדי שכל המודולים יקבלו משתנים בזמן.
 import 'dotenv/config';
 
 import express from 'express';
@@ -11,28 +10,28 @@ import apiRouter from './router.ts';
 
 const app = express();
 
-// Allow browser clients (Vite dev server, Expo web) to call the API
+// מאפשר קריאות מהקליינטים בדפדפן.
 app.use(cors());
 
-// Body parser + request logging
+// JSON + לוגים לבקשות
 app.use(express.json());
 app.use(logger);
 
-// Health check
+// בדיקת חיים מהירה
 app.get('/', (_req, res) => {
   res.json({ message: 'RateFlix API is running' });
 });
 
-// All feature routers are aggregated in router.ts
+// כל הראוטים מרוכזים ב-router.ts
 app.use('/api', apiRouter);
 
-// 404 handler + global error handler (must be last)
+// הנדלר 404 + שגיאות גלובלי בסוף השרשרת
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT ?? 5000;
 
-// Start the server, then connect to the DB (course app.ts convention)
+// מעלים שרת ואז מתחברים ל-DB
 app.listen(PORT, async () => {
   try {
     await connectDB();
@@ -45,6 +44,6 @@ app.listen(PORT, async () => {
   }
 });
 
-// Close the DB connection cleanly on process termination signals
+// סוגרים DB נקי בסיגנלי סיום
 process.on('SIGINT', () => void gracefulShutdown('SIGINT')); // Ctrl+C
 process.on('SIGTERM', () => void gracefulShutdown('SIGTERM')); // hosting/docker stop

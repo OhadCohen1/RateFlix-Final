@@ -12,7 +12,7 @@ export interface AuthFormErrors {
   confirmPassword?: string;
 }
 
-/** Shared validation for the login/register forms; returns field-level Hebrew errors */
+/** ולידציה משותפת לטפסי התחברות והרשמה */
 export const validateAuthForm = (
   email: string,
   password: string,

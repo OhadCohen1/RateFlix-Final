@@ -6,14 +6,14 @@ import type { Item } from '../types';
 interface SearchBoxProps {
   value: string;
   onChange: (value: string) => void;
-  /** Fired on submit or when a suggestion is picked */
+  /** מופעל ב-submit או בבחירת הצעה */
   onSearch: (query: string) => void;
 }
 
 const MAX_SUGGESTIONS = 6;
 const DEBOUNCE_MS = 250;
 
-/** Bolds the matched part of the title inside a suggestion */
+/** מדגיש את החלק שתואם לחיפוש */
 const highlightMatch = (name: string, query: string): ReactNode => {
   const index = name.toLowerCase().indexOf(query.toLowerCase());
   if (index < 0) return name;
@@ -32,7 +32,7 @@ const SearchBox = ({ value, onChange, onSearch }: SearchBoxProps) => {
   const [searched, setSearched] = useState(false);
   const skipNextFetch = useRef(false);
 
-  // Debounced live suggestions while typing
+  // הצעות חיות עם debounce בזמן הקלדה.
   useEffect(() => {
     if (skipNextFetch.current) {
       skipNextFetch.current = false;
@@ -86,7 +86,7 @@ const SearchBox = ({ value, onChange, onSearch }: SearchBoxProps) => {
           className="w-64 rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-brand-500"
         />
 
-        {/* Suggestions dropdown */}
+        {/* רשימת הצעות */}
         {open && (
           <ul className="absolute top-full right-0 left-0 z-20 mt-1 overflow-hidden rounded-xl border border-surface-700 bg-surface-900 shadow-2xl shadow-black/50">
             {suggestions.length === 0 && searched ? (
@@ -96,7 +96,7 @@ const SearchBox = ({ value, onChange, onSearch }: SearchBoxProps) => {
                 <li key={item.id}>
                   <button
                     type="button"
-                    // mousedown fires before the input's blur, so the click always lands
+                    // onMouseDown רץ לפני blur, ככה הבחירה לא נבלעת.
                     onMouseDown={(e) => {
                       e.preventDefault();
                       pickSuggestion(item);

@@ -4,7 +4,7 @@ import Movie from '../movies/movies.model.ts';
 import { ApiError } from '../../middlewares/errorHandler.ts';
 import { buildSuccessResponse } from '../../utils/response.builder.ts';
 
-// GET /api/categories
+// רשימת קטגוריות.
 export const getCategories = async (_req: Request, res: Response): Promise<void> => {
   const categories = await Category.find().sort({ displayOrder: 1, name: 1 });
   res.json(buildSuccessResponse({
@@ -17,7 +17,7 @@ interface CategoryBody {
   displayOrder?: number;
 }
 
-// POST /api/categories  (admin only)
+// יצירת קטגוריה (אדמין).
 export const createCategory = async (req: Request, res: Response): Promise<void> => {
   const { name, slug, displayOrder } = req.body as CategoryBody;
 
@@ -35,14 +35,14 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
     category }));
 };
 
-// DELETE /api/categories/:id  (admin only)
+// מחיקת קטגוריה (אדמין).
 export const deleteCategory = async (req: Request, res: Response): Promise<void> => {
   const category = await Category.findByIdAndDelete(req.params.id);
   if (!category) {
     throw new ApiError(404, 'Category not found');
   }
 
-  // Detach the category from movies instead of deleting them
+  // מנתקים קטגוריה מהסרטים, לא מוחקים סרטים.
   await Movie.updateMany({ categoryId: category._id }, { $unset: { categoryId: '' } });
 
   res.json(buildSuccessResponse({

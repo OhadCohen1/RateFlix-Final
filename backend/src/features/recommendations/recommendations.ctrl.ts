@@ -20,8 +20,7 @@ interface RateBody {
   reviewText?: string;
 }
 
-// POST /api/movies/:id/rate  (protected)
-// Creates the rating on first call, updates it on subsequent calls (upsert)
+// דירוג סרט: יוצר או מעדכן באותה פעולה.
 export const rateMovie = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const { score, reviewText } = req.body as RateBody;
@@ -42,14 +41,14 @@ export const rateMovie = async (req: Request, res: Response): Promise<void> => {
     { returnDocument: 'after', upsert: true, runValidators: true, setDefaultsOnInsert: true }
   );
 
-  // The matrix changed - force a rebuild on the next recommendations request
+  // יש שינוי בדירוגים, אז מנקים קאש לבקשת ההמלצות הבאה.
   invalidateMatrixCache();
 
   res.status(201).json(buildSuccessResponse({
     rating }));
 };
 
-// DELETE /api/movies/:id/rate  (protected) - FR-03: a user may remove their rating
+// מחיקת דירוג של המשתמש.
 export const deleteRating = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
 
@@ -63,8 +62,7 @@ export const deleteRating = async (req: Request, res: Response): Promise<void> =
     message: 'Rating removed' }));
 };
 
-// GET /api/ratings/me  (protected) - the user's ratings as { itemId: score },
-// used by the catalog to render "my rating" stars on each card
+// מחזיר את הדירוגים שלי בפורמט { itemId: score }.
 export const getMyRatings = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const ratings = await Rating.find({ userId }).select('itemId score');
@@ -78,8 +76,7 @@ export const getMyRatings = async (req: Request, res: Response): Promise<void> =
     scores }));
 };
 
-// Cold-start fallback: the most popular movies globally, ranked by average
-// score (weighted by how many users rated them)
+// פולבק למצב cold start: מביאים את הסרטים הכי מדורגים גלובלית.
 const getTopRatedMovies = async (limit = 10) => {
   const top = await Rating.aggregate<{ _id: Types.ObjectId; avgScore: number; ratingsCount: number }>([
     {
@@ -113,7 +110,7 @@ const getTopRatedMovies = async (limit = 10) => {
     });
 };
 
-// Persists an audit entry for the analytics dashboard without delaying the response
+// לוג רקע לדאשבורד, בלי לעכב תשובה ללקוח.
 const logRecommendation = (
   userId: string,
   source: 'knn' | 'popular',
@@ -128,7 +125,7 @@ const logRecommendation = (
   );
 };
 
-// GET /api/recommendations  (protected)
+// המלצות למשתמש המחובר.
 export const getRecommendations = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const startedAt = Date.now();
@@ -136,8 +133,7 @@ export const getRecommendations = async (req: Request, res: Response): Promise<v
   const matrix = await getRatingsMatrix();
   const userRatings = matrix[userId];
 
-  // Cold start: the user has not rated anything yet, so KNN has no signal -
-  // fall back to the top globally rated movies
+  // אין מספיק סיגנל ל-KNN, עוברים לפולבק של פופולריות.
   if (!userRatings || Object.keys(userRatings).length === 0) {
     const movies = await getTopRatedMovies();
     logRecommendation(userId, 'popular', movies.map((m) => m._id), Date.now() - startedAt);
@@ -148,8 +144,7 @@ export const getRecommendations = async (req: Request, res: Response): Promise<v
 
   const recommendations = knnRecommend(userId, matrix, 3);
 
-  // The user has ratings but no overlapping neighbors (or neighbors rated
-  // nothing new) - treat it as cold start as well
+  // יש דירוגים אבל אין שכנים שימושיים, אז אותו פולבק.
   if (recommendations.length === 0) {
     const movies = await getTopRatedMovies();
     logRecommendation(userId, 'popular', movies.map((m) => m._id), Date.now() - startedAt);
@@ -158,7 +153,7 @@ export const getRecommendations = async (req: Request, res: Response): Promise<v
     return;
   }
 
-  // Replace bare itemIds with the full movie documents
+  // ממפים itemId למסמכי סרט מלאים.
   const movieDocs = await Movie.find({
     _id: { $in: recommendations.map((r) => r.itemId) },
   })

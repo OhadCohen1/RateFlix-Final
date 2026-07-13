@@ -5,15 +5,12 @@ import { colors } from '../constants/theme';
 interface PopupProps {
   message: string;
   type?: 'error' | 'success';
-  /** Called after the popup auto-hides (or when it should be cleared) */
+  /** נקרא אחרי שהפופאפ נסגר אוטומטית */
   onDismiss: () => void;
   autoHideMs?: number;
 }
 
-/**
- * Toast-style popup for transient feedback (save success, action errors).
- * Fades in above the tab bar and auto-dismisses.
- */
+// פופאפ קצר לפידבק מהיר למשתמש.
 const Popup = ({ message, type = 'error', onDismiss, autoHideMs = 3000 }: PopupProps) => {
   const opacity = useRef(new Animated.Value(0)).current;
 

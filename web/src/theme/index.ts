@@ -1,9 +1,4 @@
-/**
- * RateFlix theme tokens.
- * The same values are declared as Tailwind utilities in src/index.css (@theme);
- * this module exposes them to TypeScript for non-class usages (inline styles,
- * canvas, charts, etc.).
- */
+// טוקני עיצוב משותפים לשימוש בקוד TypeScript.
 export const colors = {
   brand: {
     400: '#f6323d',

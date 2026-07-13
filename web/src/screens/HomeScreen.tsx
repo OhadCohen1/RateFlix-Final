@@ -55,7 +55,7 @@ const HomeScreen = () => {
         setItems(movies);
         setUsingMockData(false);
       } catch {
-        // API unreachable - fall back to the local mock catalog so the UI still renders
+        // אם ה-API לא זמין, נופלים לנתוני דמו.
         const q = query.search?.trim().toLowerCase();
         setItems(
           q
@@ -72,7 +72,7 @@ const HomeScreen = () => {
     []
   );
 
-  // Initial load: catalog + categories (+ user context when logged in)
+  // טעינה ראשונית: קטלוג, קטגוריות והקשר משתמש.
   useEffect(() => {
     void loadCatalog({});
     fetchCategories().then(setCategories).catch(() => setCategories([]));
@@ -92,7 +92,7 @@ const HomeScreen = () => {
       .catch(() => setFavoriteIds(new Set()));
   }, [user]);
 
-  // Re-query when filters change (filtering always applies to the full catalog)
+  // טוענים מחדש כשסינון/מיון משתנה.
   useEffect(() => {
     setShowFavorites(false);
     void loadCatalog({ search, category: categoryId, sort });
@@ -143,7 +143,7 @@ const HomeScreen = () => {
         else updated.delete(itemId);
         return updated;
       });
-      // In the favorites view, un-hearting a movie removes it from the list
+      // בתצוגת מועדפים, הסרה מהלב מורידה מהרשימה מיד.
       if (!next) {
         setFavoriteItems((prev) => prev.filter((m) => m.id !== itemId));
       }
@@ -177,7 +177,7 @@ const HomeScreen = () => {
         <SearchBox value={search} onChange={setSearch} onSearch={handleSearch} />
       </div>
 
-      {/* Filter + sort chips */}
+      {/* פילטרים ומיון */}
       <div className="mb-6 flex flex-wrap items-center gap-2">
         {user && (
           <>

@@ -18,7 +18,7 @@ const favoriteSchema = new Schema<IFavorite>({
   },
 });
 
-// A movie can be favorited once per user
+// כל סרט יכול להופיע פעם אחת במועדפים של אותו משתמש.
 favoriteSchema.index({ userId: 1, itemId: 1 }, { unique: true });
 
 const Favorite = model<IFavorite>('Favorite', favoriteSchema);

@@ -3,13 +3,13 @@ import StarRating from './StarRating';
 
 interface MovieCardProps {
   item: Item;
-  /** The score this user gave the item (if any) */
+  /** הציון שהמשתמש נתן לסרט (אם יש) */
   userScore?: number;
-  /** When provided, the star module is interactive */
+  /** אם נשלח handler, הכוכבים לחיצים */
   onRate?: (itemId: string, score: number) => void;
-  /** When provided, a small "remove rating" action appears next to the stars */
+  /** אם נשלח handler, מציגים גם הסרת דירוג */
   onDeleteRating?: (itemId: string) => void;
-  /** Favorite heart state + toggle (shown only when the handler is provided) */
+  /** מצב לב למועדפים + toggle */
   isFavorite?: boolean;
   onToggleFavorite?: (itemId: string, next: boolean) => void;
 }

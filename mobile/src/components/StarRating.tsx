@@ -3,7 +3,7 @@ import { colors, MAX_STARS } from '../constants/theme';
 
 interface StarRatingProps {
   value: number;
-  /** When provided, the stars are tappable */
+  /** אם נשלח handler, הכוכבים לחיצים */
   onChange?: (score: number) => void;
   size?: number;
 }

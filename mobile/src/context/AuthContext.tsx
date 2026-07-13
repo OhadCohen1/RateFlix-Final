@@ -10,7 +10,7 @@ const USER_KEY = 'rateflix_user';
 
 interface AuthContextValue {
   user: User | null;
-  /** true while the persisted session is being restored on app start */
+  /** true בזמן שחזור סשן שמור באתחול */
   initializing: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  // Restore the persisted session once on startup
+  // משחזרים סשן שמור פעם אחת בתחילת האפליקציה.
   useEffect(() => {
     const restore = async () => {
       try {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(JSON.parse(rawUser) as User);
         }
       } catch {
-        // corrupted storage - start signed out
+        // אם האחסון שבור, מתחילים מנותקים.
       } finally {
         setInitializing(false);
       }

@@ -18,7 +18,7 @@ const generateToken = (user: UserDocument): string => {
   return jwt.sign({ id: user._id.toString(), role: user.role }, secret, { expiresIn: '30d' });
 };
 
-// POST /api/auth/register
+// הרשמה
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body as AuthBody;
 
@@ -31,7 +31,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     throw new ApiError(409, 'A user with this email already exists');
   }
 
-  const user = await User.create({ email, password }); // password is hashed by the pre-save hook
+  const user = await User.create({ email, password }); // הסיסמה נטחנת אוטומטית ב-pre-save
 
   res.status(201).json(buildSuccessResponse({
     token: generateToken(user),
@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }));
 };
 
-// POST /api/auth/login
+// התחברות
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body as AuthBody;
 
@@ -47,7 +47,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     throw new ApiError(400, 'email and password are required');
   }
 
-  // password has select: false, so request it explicitly for the bcrypt comparison
+  // שדה password מוסתר כברירת מחדל, אז מושכים אותו ידנית להשוואה.
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.matchPassword(password))) {

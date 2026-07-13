@@ -1,9 +1,6 @@
 import type { User, UserRole, Profile, ProfileStats } from '../types';
 
-/**
- * Standard API envelope (matches the course response.builder):
- * { success, data, timestamp } on success / { success, error, timestamp } on failure
- */
+/** מעטפת תשובה אחידה מהשרת */
 export interface ApiEnvelope<T> {
   success: boolean;
   data: T;
@@ -11,7 +8,7 @@ export interface ApiEnvelope<T> {
   timestamp: string;
 }
 
-/** Backend response payloads (documents exactly as the API returns them) */
+/** טיפוסים לתשובות כמו שה-API מחזיר */
 
 export interface ApiMovie {
   _id: string;

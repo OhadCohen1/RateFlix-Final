@@ -7,10 +7,7 @@ import adminRoutes from './features/admin/admin.router.ts';
 import userRoutes from './features/users/users.router.ts';
 import recommendationRoutes from './features/recommendations/recommendations.router.ts';
 
-/**
- * Central API router - aggregates every feature router under /api,
- * so app.ts stays a thin bootstrap file.
- */
+// ראוטר מרכזי לכל פיצ'רי ה-API.
 const apiRouter = Router();
 
 apiRouter.use('/auth', authRoutes);
@@ -19,6 +16,6 @@ apiRouter.use('/categories', categoryRoutes);
 apiRouter.use('/profile', profileRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/users', userRoutes);
-apiRouter.use('/', recommendationRoutes); // ratings, favorites, recommendations
+apiRouter.use('/', recommendationRoutes); // דירוגים, מועדפים, המלצות
 
 export default apiRouter;

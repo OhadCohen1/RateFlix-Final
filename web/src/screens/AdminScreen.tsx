@@ -87,7 +87,7 @@ const StatsTab = () => {
         ))}
       </div>
 
-      {/* Engine performance (NFR-01 evidence) */}
+      {/* ביצועי מנוע ההמלצות */}
       <section className="rounded-xl border border-surface-700 bg-surface-900 p-5">
         <h2 className="mb-3 text-lg font-bold text-zinc-50">ביצועי מנוע ההמלצות</h2>
         <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
@@ -113,9 +113,7 @@ const StatsTab = () => {
             <div className="mt-1 text-sm text-zinc-500">המלצות מותאמות אישית (KNN)</div>
           </div>
         </div>
-        <p className="mt-3 text-xs text-zinc-600">
-          דרישת NFR-01: זמן תגובה תת-שנייה. הנתונים נמדדים ונשמרים בכל בקשת המלצות.
-        </p>
+        <p className="mt-3 text-xs text-zinc-600">המדדים האלו נאספים בכל בקשת המלצות.</p>
       </section>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -222,7 +220,7 @@ const CreateMovieTab = () => {
     }
     setTitleError('');
 
-    // Multipart payload: text fields + the poster file under the "image" field
+    // שולחים multipart: שדות טקסט + קובץ image.
     const formData = new FormData();
     formData.append('title', title.trim());
     if (categoryId) formData.append('categoryId', categoryId);

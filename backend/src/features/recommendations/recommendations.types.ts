@@ -1,9 +1,6 @@
 import type { HydratedDocument, Types } from 'mongoose';
 
-/**
- * Audit log of every recommendations computation - documents the engine's
- * real-world response times (NFR-01: sub-second responses).
- */
+// שומרים לוג לכל הרצת המלצות בשביל ניטור.
 export interface IRecommendationLog {
   userId: Types.ObjectId;
   recommendedItems: Types.ObjectId[];

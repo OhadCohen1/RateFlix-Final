@@ -26,13 +26,13 @@ export const fetchMovies = async (query: CatalogQuery = {}): Promise<Item[]> => 
   return movies.map(mapMovieToItem);
 };
 
-/** Admin only - multipart form with the poster image; the backend runs the AI enrichment */
+/** אדמין בלבד: יצירת סרט עם multipart */
 export const createMovie = async (formData: FormData): Promise<Item> => {
   const { movie } = await api.post<MoviePayload>('/movies', formData);
   return mapMovieToItem(movie);
 };
 
-/** Admin only - removes the movie together with its ratings and favorites */
+/** אדמין בלבד: מחיקת סרט */
 export const deleteMovie = async (itemId: string): Promise<void> => {
   await api.delete(`/movies/${itemId}`);
 };
@@ -53,7 +53,7 @@ export const deleteRating = async (itemId: string): Promise<void> => {
   await api.delete(`/movies/${itemId}/rate`);
 };
 
-/** The current user's ratings as { itemId: score } - for "my rating" stars */
+/** הדירוגים של המשתמש בפורמט { itemId: score } */
 export const fetchMyScores = async (): Promise<Record<string, number>> => {
   const { scores } = await api.get<MyScoresPayload>('/ratings/me');
   return scores;

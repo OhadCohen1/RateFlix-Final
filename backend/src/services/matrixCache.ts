@@ -1,14 +1,7 @@
 import Rating from '../features/ratings/ratings.model.ts';
 import type { RatingsMatrix } from './KNNService.ts';
 
-/**
- * In-memory cache of the full sparse ratings matrix { userId: { itemId: score } }.
- * Building the matrix requires pulling every rating from the DB; doing that on
- * every request would hammer Mongo and keep the single-threaded Event Loop busy
- * re-building large objects (NFR-01). The cache is rebuilt at most once per TTL,
- * and is invalidated immediately when a rating or movie changes so
- * recommendations never go stale.
- */
+// קאש בזיכרון למטריצת הדירוגים כדי לא לבנות אותה מחדש בכל בקשה.
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 interface MatrixCache {

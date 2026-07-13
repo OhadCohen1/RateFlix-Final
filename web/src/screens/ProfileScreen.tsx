@@ -13,7 +13,7 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Editable personal details
+  // פרטים אישיים לעריכה
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -60,7 +60,7 @@ const ProfileScreen = () => {
   const handleDeleteRating = async (movieId: string) => {
     try {
       await deleteRating(movieId);
-      await load(); // refresh stats + history
+      await load(); // ריענון סטטיסטיקות והיסטוריה
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
@@ -84,7 +84,7 @@ const ProfileScreen = () => {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
-      {/* Header */}
+      {/* כותרת */}
       <div className="mb-8 flex items-center gap-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-500 text-2xl font-black text-white">
           {initials}
@@ -102,7 +102,7 @@ const ProfileScreen = () => {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* סטטיסטיקות */}
       <div className="mb-8 grid grid-cols-3 gap-4">
         {[
           { value: data.stats.ratingsCount, label: 'דירוגים' },

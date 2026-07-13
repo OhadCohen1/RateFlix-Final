@@ -21,9 +21,7 @@ interface EngineAggregation {
   runs: number;
 }
 
-// GET /api/admin/stats  (admin only)
-// Analytics dashboard: entity totals, rating quality, top movies and
-// the recommendation engine's measured performance (NFR-01 evidence)
+// סטטיסטיקות לדאשבורד אדמין.
 export const getAdminStats = async (_req: Request, res: Response): Promise<void> => {
   const [users, movies, ratings, favorites, categories] = await Promise.all([
     User.countDocuments(),
@@ -56,7 +54,7 @@ export const getAdminStats = async (_req: Request, res: Response): Promise<void>
     },
   ]);
 
-  // Personalization ratio: how many runs used KNN vs the popular fallback
+  // כמה מהריצות הגיעו מ-KNN לעומת פולבק פופולרי.
   const sourceAgg = await RecommendationLog.aggregate<{ _id: 'knn' | 'popular'; runs: number }>([
     { $group: { _id: '$source', runs: { $sum: 1 } } },
   ]);

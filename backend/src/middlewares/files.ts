@@ -4,12 +4,10 @@ import type { FileFilterCallback } from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
 
-// Cloudinary config (course files.ts convention): the SDK configures itself
-// automatically from the CLOUDINARY_URL env var (cloudinary://key:secret@name)
+// קונפיג Cloudinary נטען מה-CLOUDINARY_URL.
 cloudinary.config({ secure: true });
 
-// Keep the file in memory as a Buffer - it is streamed straight to Cloudinary,
-// so nothing is written to the local disk
+// שומרים קובץ בזיכרון ומזרימים ישר ל-Cloudinary.
 const storage = multer.memoryStorage();
 
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
@@ -23,13 +21,10 @@ const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCall
 export const saveToMemory = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max poster size
+  limits: { fileSize: 5 * 1024 * 1024 }, // עד 5MB
 });
 
-/**
- * Streams an in-memory file buffer (from Multer) to Cloudinary and resolves
- * with the upload result, including the secure https URL.
- */
+// מעלה באפר תמונה ל-Cloudinary ומחזיר תוצאה.
 export const uploadImageBuffer = (
   buffer: Buffer,
   folder = 'rateflix/posters'

@@ -72,7 +72,7 @@ export default function CatalogScreen() {
         setMyScores(scores);
         setUsingMockData(false);
       } catch {
-        // API unreachable - fall back to the local mock catalog so the UI still renders
+        // אם ה-API לא זמין, נופלים לנתוני דמו.
         setItems(filterMock(query ?? search));
         setUsingMockData(true);
       }
@@ -86,7 +86,7 @@ export default function CatalogScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, sort]);
 
-  // Live search suggestions while typing (debounced via useDebounce)
+  // הצעות חיפוש בזמן הקלדה (עם debounce).
   useEffect(() => {
     if (skipNextSuggest.current) {
       skipNextSuggest.current = false;
@@ -103,7 +103,7 @@ export default function CatalogScreen() {
   }, [debouncedSearch]);
 
   const pickSuggestion = (item: Item) => {
-    skipNextSuggest.current = true; // filling the input must not re-open the box
+    skipNextSuggest.current = true; // בחירה לא אמורה לפתוח שוב את הרשימה
     setSearch(item.name);
     setSuggestions([]);
     Keyboard.dismiss();
@@ -144,7 +144,7 @@ export default function CatalogScreen() {
 
   return (
     <View style={styles.flex}>
-      {/* Dark header matching the web app */}
+      {/* כותרת עליונה */}
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Text style={styles.headerTitle}>🎬 קטלוג סרטים</Text>
         <TextInput
@@ -161,7 +161,7 @@ export default function CatalogScreen() {
         />
       </View>
 
-      {/* Live search suggestions box */}
+      {/* תיבת הצעות חיפוש */}
       {suggestions.length > 0 && (
         <View style={styles.suggestionsBox}>
           {suggestions.map((s, i) => (
@@ -193,7 +193,7 @@ export default function CatalogScreen() {
         </View>
       )}
 
-      {/* Filter chips (RTL: the row starts from the right, like the rest of the app) */}
+      {/* צ'יפים לסינון ומיון */}
       <ScrollView
         ref={chipsScrollRef}
         horizontal
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
-    // Float above the chips + list like a dropdown
+    // מרחף מעל התוכן כמו דרופדאון
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 12,

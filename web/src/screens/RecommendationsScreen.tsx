@@ -6,7 +6,7 @@ import { getApiErrorMessage } from '../utils/errors';
 import type { Item } from '../types';
 import { MAX_STARS } from '../theme';
 
-/** predictedScore (1-5) rendered as a match percentage, like the mockups */
+/** ממיר ציון חזוי לאחוז התאמה */
 const matchPercent = (item: Item): number =>
   Math.round(((item.predictedScore ?? item.avgRating) / MAX_STARS) * 100);
 
@@ -36,7 +36,7 @@ const RecommendationsScreen = () => {
       <h1 className="mb-2 text-3xl font-black text-zinc-50">המלצות בשבילך</h1>
       <p className="mb-4 text-zinc-400">מבוסס אלגוריתם KNN</p>
 
-      {/* How the engine works */}
+      {/* איך זה עובד בקצרה */}
       <div className="mb-6 rounded-xl border-r-4 border-amber-500 bg-surface-900 p-4">
         <h2 className="mb-1 font-bold text-amber-400">🧠 איך עובד ה-KNN?</h2>
         <p className="text-sm leading-relaxed text-zinc-400">
@@ -70,7 +70,7 @@ const RecommendationsScreen = () => {
           {items.map((item, index) => (
             <div key={item.id} className="flex flex-col gap-2">
               <MovieCard item={item} />
-              {/* Match bar */}
+              {/* פס התאמה */}
               <div className="rounded-lg border border-surface-700 bg-surface-900 px-3 py-2">
                 <div className="mb-1 flex items-center justify-between text-xs">
                   <span className="font-semibold text-emerald-400">

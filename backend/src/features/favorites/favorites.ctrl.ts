@@ -10,7 +10,7 @@ const requireUserId = (req: Request): string => {
   return userId;
 };
 
-// GET /api/favorites  (protected) - the user's favorite movies
+// מחזיר את המועדפים של המשתמש.
 export const getMyFavorites = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const favorites = await Favorite.find({ userId }).sort({ addedAt: -1 });
@@ -20,7 +20,7 @@ export const getMyFavorites = async (req: Request, res: Response): Promise<void>
     count: movies.length, movies }));
 };
 
-// POST /api/movies/:id/favorite  (protected)
+// מוסיף סרט למועדפים.
 export const addFavorite = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   const movieId = req.params.id;
@@ -28,7 +28,7 @@ export const addFavorite = async (req: Request, res: Response): Promise<void> =>
   const movie = await Movie.findById(movieId);
   if (!movie) throw new ApiError(404, 'Movie not found');
 
-  // Upsert keeps the operation idempotent (no duplicate-key error on double click)
+  // upsert מונע כפילויות בלחיצות חוזרות.
   await Favorite.findOneAndUpdate(
     { userId, itemId: movieId },
     { $setOnInsert: { addedAt: new Date() } },
@@ -39,7 +39,7 @@ export const addFavorite = async (req: Request, res: Response): Promise<void> =>
     message: 'Added to favorites' }));
 };
 
-// DELETE /api/movies/:id/favorite  (protected)
+// מוריד סרט מהמועדפים.
 export const removeFavorite = async (req: Request, res: Response): Promise<void> => {
   const userId = requireUserId(req);
   await Favorite.deleteOne({ userId, itemId: req.params.id });

@@ -11,10 +11,7 @@ interface UserCategoryAggregation {
   count: number;
 }
 
-// GET /api/users  (protected)
-// Community summary powering the "users" tab: every registered user with
-// their display name, ratings count and most-rated categories. This is the
-// visible pool the KNN engine draws neighbors from.
+// סיכום משתמשי הקהילה למסך users.
 export const getUsersSummary = async (_req: Request, res: Response): Promise<void> => {
   const [users, profiles, ratingCounts, categoryAgg, categories] = await Promise.all([
     User.find({ isActive: true }).select('email role createdAt').lean(),
@@ -39,7 +36,7 @@ export const getUsersSummary = async (_req: Request, res: Response): Promise<voi
   const countByUser = new Map(ratingCounts.map((r) => [r._id.toString(), r.count]));
   const categoryName = new Map(categories.map((c) => [c._id.toString(), c.name]));
 
-  // Top-2 most rated category names per user
+  // שתי הקטגוריות הכי מדורגות לכל משתמש.
   const topCategoriesByUser = new Map<string, string[]>();
   const grouped = new Map<string, { name: string; count: number }[]>();
   for (const row of categoryAgg) {

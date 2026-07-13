@@ -11,11 +11,7 @@ interface GeminiResponse {
   }[];
 }
 
-/**
- * Generates marketing metadata for a movie from its title using Google Gemini:
- * a catchy 2-sentence synopsis in Hebrew and 3 relevant string tags.
- * Uses the REST API directly (no SDK) with a JSON response schema.
- */
+// מייצר תקציר ותגיות לסרט דרך Gemini.
 export const generateMovieMetadata = async (title: string): Promise<MovieMetadata> => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {

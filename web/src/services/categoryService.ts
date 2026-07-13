@@ -8,13 +8,13 @@ export const fetchCategories = async (): Promise<Category[]> => {
   return categories.map(mapApiCategory);
 };
 
-/** Admin only */
+/** אדמין בלבד */
 export const createCategory = async (name: string): Promise<Category> => {
   const { category } = await api.post<{ category: ApiCategory }>('/categories', { name });
   return mapApiCategory(category);
 };
 
-/** Admin only */
+/** אדמין בלבד */
 export const deleteCategory = async (categoryId: string): Promise<void> => {
   await api.delete(`/categories/${categoryId}`);
 };

@@ -15,7 +15,7 @@ interface TokenPayload extends JwtPayload {
   role: UserRole;
 }
 
-// Make the authenticated user available as req.user everywhere, fully typed
+// מוסיפים טיפוס ל-req.user כדי שיהיה זמין בכל הפרויקט.
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
@@ -25,7 +25,7 @@ declare global {
   }
 }
 
-// Verifies the JWT from the Authorization header and attaches { id, role } to req.user
+// בודק JWT ומצמיד את המשתמש לבקשה.
 export const protect: RequestHandler = (req, _res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -50,7 +50,7 @@ export const protect: RequestHandler = (req, _res, next) => {
   next();
 };
 
-// Restricts a route to specific roles, e.g. authorize('admin')
+// מאפשר כניסה רק לרולים שנשלחו.
 export const authorize = (...roles: UserRole[]): RequestHandler => {
   return (req, _res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {

@@ -12,10 +12,7 @@ const connectDB = async (): Promise<void> => {
   console.log(`MongoDB Connected: ${conn.connection.host}`);
 };
 
-/**
- * Graceful shutdown (matches the course db.services): closes the MongoDB
- * connection before exiting, triggered by process signals in app.ts.
- */
+// כיבוי מסודר: סוגרים חיבור ל-Mongo לפני יציאה.
 export async function gracefulShutdown(signal: string): Promise<void> {
   console.log(`\nReceived ${signal}. Starting graceful shutdown...`);
 
