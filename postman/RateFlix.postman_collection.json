@@ -1,0 +1,803 @@
+{
+  "info": {
+    "_postman_id": "b7e3a9d4-5c21-4f8e-9d02-rateflix2026",
+    "name": "RateFlix API",
+    "description": "קולקציית בדיקות מלאה ל-REST API של RateFlix.\n\nהוראות הרצה:\n1. ודאו שהשרת רץ (npm run dev בתיקיית backend, פורט 5000)\n2. לחצו Run Collection - כל הבקשות רצות לפי הסדר, הטוקנים נלכדים אוטומטית וכל בקשה מאומתת בטסטים (סטטוס + מעטפת { success, data, timestamp })\n\nההרצה אידמפוטנטית: משתמש הבדיקה נרשם עם אימייל ייחודי, וכל דירוג/מועדף/סרט/קטגוריה שנוצרים - נמחקים בסוף. אפשר להריץ שוב ושוב.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "userToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "freshToken", "value": "" },
+    { "key": "movieId", "value": "" },
+    { "key": "testMovieId", "value": "" },
+    { "key": "testCategoryId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "0 - Health",
+      "item": [
+        {
+          "name": "Health check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('server is up', () => pm.expect(pm.response.json().message).to.include('RateFlix'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] },
+            "description": "בדיקת חיים בסיסית - השרת עונה"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 - Auth",
+      "item": [
+        {
+          "name": "Register (new user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('envelope: success=true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('returns a JWT token', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.collectionVariables.set('freshToken', json.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"postman_{{$timestamp}}@test.com\",\n  \"password\": \"secret123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "הרשמה עם אימייל ייחודי (timestamp) - הסיסמה נשמרת כ-bcrypt hash. הטוקן נלכד ל-{{freshToken}} וישמש את בדיקות הדירוג/מועדפים כדי לא לגעת בנתוני הדמו"
+          }
+        },
+        {
+          "name": "Login (demo user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('envelope: success=true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('returns user + token', () => {",
+                  "  pm.expect(json.data.token).to.be.a('string');",
+                  "  pm.expect(json.data.user.email).to.eql('demo@rateflix.com');",
+                  "});",
+                  "pm.collectionVariables.set('userToken', json.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@rateflix.com\",\n  \"password\": \"demo123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "התחברות משתמש הדמו - הטוקן נלכד אוטומטית ל-{{userToken}}"
+          }
+        },
+        {
+          "name": "Login (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('role is admin', () => pm.expect(json.data.user.role).to.eql('admin'));",
+                  "pm.collectionVariables.set('adminToken', json.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@rateflix.com\",\n  \"password\": \"admin123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "התחברות מנהל - הטוקן נלכד ל-{{adminToken}}"
+          }
+        },
+        {
+          "name": "Login - wrong password (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "const json = pm.response.json();",
+                  "pm.test('envelope: success=false', () => pm.expect(json.success).to.be.false);",
+                  "pm.test('error message returned', () => pm.expect(json.error).to.eql('Invalid email or password'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@rateflix.com\",\n  \"password\": \"wrong-password\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "בדיקה שלילית: סיסמה שגויה מחזירה 401 עם מעטפת שגיאה אחידה"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Movies",
+      "item": [
+        {
+          "name": "Get catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('returns movies array with count', () => {",
+                  "  pm.expect(json.data.movies).to.be.an('array');",
+                  "  pm.expect(json.data.count).to.eql(json.data.movies.length);",
+                  "});",
+                  "if (json.data.movies.length > 0) pm.collectionVariables.set('movieId', json.data.movies[0]._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/movies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies"]
+            },
+            "description": "קטלוג מלא (ציבורי, ללא טוקן) - כולל ממוצע דירוגים לכל סרט. ה-id של הסרט הראשון נלכד ל-{{movieId}}"
+          }
+        },
+        {
+          "name": "Search + sort",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('filtered result is an array', () => pm.expect(pm.response.json().data.movies).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/movies?search=בין&sort=rating",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies"],
+              "query": [
+                { "key": "search", "value": "בין" },
+                { "key": "sort", "value": "rating" }
+              ]
+            },
+            "description": "חיפוש טקסטואלי (regex על שם + תגיות) בשילוב מיון לפי דירוג"
+          }
+        },
+        {
+          "name": "Create movie (admin, AI enrichment)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('movie created', () => pm.expect(json.data.movie.title).to.include('Postman'));",
+                  "pm.collectionVariables.set('testMovieId', json.data.movie._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "title", "value": "The Matrix (Postman Test)", "type": "text" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies"]
+            },
+            "description": "יצירת סרט (מנהל בלבד, multipart) - השרת קורא ל-Gemini ליצירת תקציר ותגיות בעברית אוטומטית. אפשר לצרף גם פוסטר בשדה image (יעלה ל-Cloudinary). הסרט נמחק בבקשה הבאה"
+          }
+        },
+        {
+          "name": "Delete test movie (cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('movie removed with its ratings and favorites', () => pm.expect(pm.response.json().success).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/{{testMovieId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "{{testMovieId}}"]
+            },
+            "description": "מחיקת סרט הבדיקה (מנהל בלבד) - מוחקת גם דירוגים ומועדפים משויכים"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Ratings & Favorites",
+      "description": "כל הבקשות כאן רצות עם המשתמש הטרי שנרשם ב-Auth, כדי לא לשנות את נתוני הדמו. בסוף הכל מנוקה.",
+      "item": [
+        {
+          "name": "Rate a movie",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('rating saved with score 5', () => pm.expect(json.data.rating.score).to.eql(5));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 5,\n  \"reviewText\": \"נבדק ע\\\"י Postman\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/{{movieId}}/rate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "{{movieId}}", "rate"]
+            },
+            "description": "דירוג סרט (FR-03) - upsert: יצירה בקריאה ראשונה, עדכון בחוזרות. מבטל את ה-cache של מטריצת ההמלצות"
+          }
+        },
+        {
+          "name": "My ratings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const scores = pm.response.json().data.scores;",
+                  "pm.test('the rating from the previous request appears', () => {",
+                  "  pm.expect(scores[pm.collectionVariables.get('movieId')]).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ratings/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ratings", "me"]
+            },
+            "description": "הדירוגים של המשתמש המחובר כמפת { itemId: score }"
+          }
+        },
+        {
+          "name": "Add favorite",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('envelope: success=true', () => pm.expect(pm.response.json().success).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/{{movieId}}/favorite",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "{{movieId}}", "favorite"]
+            },
+            "description": "הוספת סרט למועדפים"
+          }
+        },
+        {
+          "name": "My favorites",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('the favorited movie appears in the list', () => {",
+                  "  const ids = json.data.movies.map(m => m._id);",
+                  "  pm.expect(ids).to.include(pm.collectionVariables.get('movieId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/favorites",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "רשימת המועדפים של המשתמש - מוחזרים מסמכי הסרטים המלאים"
+          }
+        },
+        {
+          "name": "Remove favorite (cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/{{movieId}}/favorite",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "{{movieId}}", "favorite"]
+            },
+            "description": "הסרה מהמועדפים - מחזיר את המשתמש הטרי למצב נקי"
+          }
+        },
+        {
+          "name": "Delete rating (cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/{{movieId}}/rate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "{{movieId}}", "rate"]
+            },
+            "description": "מחיקת הדירוג (FR-03) - מחזיר את המשתמש הטרי למצב נקי"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Recommendations (KNN)",
+      "item": [
+        {
+          "name": "Get recommendations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('source is knn or popular', () => pm.expect(['knn', 'popular']).to.include(json.data.source));",
+                  "pm.test('movies carry a predictedScore', () => {",
+                  "  if (json.data.movies.length > 0) pm.expect(json.data.movies[0].predictedScore).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{userToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/recommendations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "recommendations"]
+            },
+            "description": "מנוע ההמלצות (FR-04): KNN עם Cosine Similarity על מטריצת דירוגים דלילה. משתמש הדמו מקבל source=knn; משתמש ללא דירוגים מקבל נפילה ל-popular. כל ריצה נמדדת ונרשמת ללוג (NFR-01)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 - Profile",
+      "item": [
+        {
+          "name": "Get my profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('returns user + stats + ratings history', () => {",
+                  "  pm.expect(json.data.user.email).to.eql('demo@rateflix.com');",
+                  "  pm.expect(json.data.stats).to.have.keys(['ratingsCount', 'avgScore', 'categoriesCount']);",
+                  "  pm.expect(json.data.ratings).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{userToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile"]
+            },
+            "description": "פרופיל המשתמש המחובר: פרטים אישיים, סטטיסטיקות והיסטוריית דירוגים"
+          }
+        },
+        {
+          "name": "Update my profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('profile saved', () => pm.expect(pm.response.json().data.profile.firstName).to.eql('בודק'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{freshToken}}", "type": "string" }]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"בודק\",\n  \"lastName\": \"פוסטמן\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile"]
+            },
+            "description": "עדכון/יצירת פרופיל (upsert) - רץ על המשתמש הטרי כדי לא לשנות את פרופיל הדמו"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 - Users & Admin",
+      "item": [
+        {
+          "name": "Users summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('returns users list', () => pm.expect(pm.response.json().data.users).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{userToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "סיכום משתמשים: כמות דירוגים וקטגוריות מועדפות לכל משתמש"
+          }
+        },
+        {
+          "name": "Admin stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('dashboard payload complete', () => {",
+                  "  pm.expect(json.data.totals).to.have.keys(['users', 'movies', 'ratings', 'favorites', 'categories']);",
+                  "  pm.expect(json.data.engine).to.have.keys(['runs', 'avgMs', 'maxMs', 'knnRuns']);",
+                  "});",
+                  "pm.test('NFR-01: avg engine time under 1000ms', () => pm.expect(json.data.engine.avgMs).to.be.below(1000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "stats"]
+            },
+            "description": "דשבורד המנהל: מונים, טופ סרטים וביצועי מנוע ההמלצות - כולל טסט שמוכיח את NFR-01 (תת-שנייה)"
+          }
+        },
+        {
+          "name": "Admin stats as regular user (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403 - role enforced', () => pm.response.to.have.status(403));",
+                  "pm.test('envelope: success=false', () => pm.expect(pm.response.json().success).to.be.false);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{userToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "stats"]
+            },
+            "description": "בדיקה שלילית: משתמש רגיל חסום מ-endpoint של מנהל (הרשאות לפי תפקיד)"
+          }
+        },
+        {
+          "name": "Create category (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('testCategoryId', pm.response.json().data.category._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"קטגוריית בדיקה {{$timestamp}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            },
+            "description": "יצירת קטגוריה (מנהל בלבד) - שם ייחודי עם timestamp; נמחקת בבקשה הבאה"
+          }
+        },
+        {
+          "name": "Delete test category (cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{testCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{testCategoryId}}"]
+            },
+            "description": "מחיקת קטגוריית הבדיקה"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 - Security",
+      "item": [
+        {
+          "name": "Protected route without token (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('clear error message', () => pm.expect(pm.response.json().error).to.include('Not authorized'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{baseUrl}}/api/favorites",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "בדיקה שלילית: גישה ל-route מוגן ללא JWT נחסמת עם 401"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+import type { Item } from '../types';
+
+/**
+ * Local mock catalog for rendering and testing when the API is unreachable.
+ * The HomeScreen falls back to this list (with a visible notice) so the UI
+ * can always be developed and demoed offline.
+ */
+export const mockItems: Item[] = [
+  {
+    id: 'mock-1',
+    name: 'בין כוכבים',
+    description: 'מסע עוצר נשימה אל מעבר לחור התולעת בניסיון נואש להציל את האנושות. חוויה קולנועית שמותחת את גבולות הזמן, האהבה והמדע.',
+    imageUrl: undefined,
+    year: 2014,
+    avgRating: 4.8,
+    ratingCount: 3120,
+    createdAt: '2014-11-07T00:00:00.000Z',
+    tags: ['מדע בדיוני', 'דרמה', 'חלל'],
+  },
+  {
+    id: 'mock-2',
+    name: 'הסנדק',
+    description: 'סאגה משפחתית אפלה על כוח, נאמנות ומחיר הירושה. הסרט שהגדיר מחדש את קולנוע הפשע האמריקאי.',
+    imageUrl: undefined,
+    year: 1972,
+    avgRating: 4.9,
+    ratingCount: 5410,
+    createdAt: '1972-03-24T00:00:00.000Z',
+    tags: ['פשע', 'דרמה', 'קלאסיקה'],
+  },
+  {
+    id: 'mock-3',
+    name: 'רוח הים',
+    description: 'אנימציה קסומה על ילדה שמגלה עולם נסתר מתחת לגלים. הרפתקה צבעונית ומרגשת לכל המשפחה.',
+    imageUrl: undefined,
+    year: 2021,
+    avgRating: 4.2,
+    ratingCount: 980,
+    createdAt: '2021-06-15T00:00:00.000Z',
+    tags: ['אנימציה', 'משפחה', 'הרפתקאות'],
+  },
+  {
+    id: 'mock-4',
+    name: 'קצב הלילה',
+    description: 'מותחן ניאו-נואר על נהג מונית לילי שנקלע לרשת של סודות בעיר שאינה ישנה. מתח חשמלי מהפריים הראשון ועד האחרון.',
+    imageUrl: undefined,
+    year: 2019,
+    avgRating: 3.9,
+    ratingCount: 1240,
+    createdAt: '2019-10-02T00:00:00.000Z',
+    tags: ['מתח', 'פשע', 'נואר'],
+  },
+  {
+    id: 'mock-5',
+    name: 'שבעה ימים בטוסקנה',
+    description: 'קומדיה רומנטית שובת לב על שפית ישראלית שיורשת מסעדה כושלת באיטליה. שמש, פסטה ואהבה בלתי צפויה.',
+    imageUrl: undefined,
+    year: 2023,
+    avgRating: 4.0,
+    ratingCount: 640,
+    createdAt: '2023-04-20T00:00:00.000Z',
+    tags: ['קומדיה', 'רומנטיקה', 'אוכל'],
+  },
+  {
+    id: 'mock-6',
+    name: 'המשוואה האחרונה',
+    description: 'ביוגרפיה מרתקת של מתמטיקאית פורצת דרך שנלחמה על מקומה באקדמיה. סיפור אמיתי על גאונות, עיקשות ומחיר ההצלחה.',
+    imageUrl: undefined,
+    year: 2020,
+    avgRating: 4.5,
+    ratingCount: 1875,
+    createdAt: '2020-01-30T00:00:00.000Z',
+    tags: ['ביוגרפיה', 'דרמה', 'מדע'],
+  },
+];

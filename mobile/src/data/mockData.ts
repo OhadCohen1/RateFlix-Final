@@ -1,0 +1,56 @@
+import type { Item } from '../types';
+
+/**
+ * Local mock catalog, shown with a notice when the API is unreachable -
+ * the UI can always be demoed offline.
+ */
+export const mockItems: Item[] = [
+  {
+    id: 'mock-1',
+    name: 'בין כוכבים',
+    description:
+      'מסע עוצר נשימה אל מעבר לחור התולעת בניסיון נואש להציל את האנושות. חוויה קולנועית שמותחת את גבולות הזמן, האהבה והמדע.',
+    year: 2014,
+    avgRating: 4.8,
+    ratingCount: 3120,
+    createdAt: '2014-11-07T00:00:00.000Z',
+    tags: ['מדע בדיוני', 'דרמה', 'חלל'],
+    categoryName: 'מדע בדיוני',
+  },
+  {
+    id: 'mock-2',
+    name: 'הסנדק',
+    description:
+      'סאגה משפחתית אפלה על כוח, נאמנות ומחיר הירושה. הסרט שהגדיר מחדש את קולנוע הפשע האמריקאי.',
+    year: 1972,
+    avgRating: 4.9,
+    ratingCount: 5410,
+    createdAt: '1972-03-24T00:00:00.000Z',
+    tags: ['פשע', 'דרמה', 'קלאסיקה'],
+    categoryName: 'דרמה',
+  },
+  {
+    id: 'mock-3',
+    name: 'רוח הים',
+    description:
+      'אנימציה קסומה על ילדה שמגלה עולם נסתר מתחת לגלים. הרפתקה צבעונית ומרגשת לכל המשפחה.',
+    year: 2021,
+    avgRating: 4.2,
+    ratingCount: 980,
+    createdAt: '2021-06-15T00:00:00.000Z',
+    tags: ['אנימציה', 'משפחה', 'הרפתקאות'],
+    categoryName: 'אנימציה',
+  },
+  {
+    id: 'mock-4',
+    name: 'קצב הלילה',
+    description:
+      'מותחן ניאו-נואר על נהג מונית לילי שנקלע לרשת של סודות בעיר שאינה ישנה. מתח חשמלי מהפריים הראשון ועד האחרון.',
+    year: 2019,
+    avgRating: 3.9,
+    ratingCount: 1240,
+    createdAt: '2019-10-02T00:00:00.000Z',
+    tags: ['מתח', 'פשע', 'נואר'],
+    categoryName: 'מתח',
+  },
+];
