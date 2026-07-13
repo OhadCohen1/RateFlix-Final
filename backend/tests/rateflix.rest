@@ -1,0 +1,149 @@
+@BaseURL = http://localhost:5000
+@adminToken = paste_admin_token_here
+@userToken = paste_user_token_here
+
+### health check
+GET {{BaseURL}}/
+
+### ---------------------------------- AUTH ----------------------------------
+
+### register a new user
+POST {{BaseURL}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "new.user@test.com",
+  "password": "secret123"
+}
+
+### login (copy the token from the response into @userToken / @adminToken above)
+POST {{BaseURL}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@rateflix.com",
+  "password": "demo123"
+}
+
+### login as admin
+POST {{BaseURL}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@rateflix.com",
+  "password": "admin123"
+}
+
+### --------------------------------- MOVIES ---------------------------------
+
+### full catalog
+GET {{BaseURL}}/api/movies
+
+### catalog with search
+GET {{BaseURL}}/api/movies?search=דרמה
+
+### catalog sorted by rating
+GET {{BaseURL}}/api/movies?sort=rating
+
+### catalog filtered by category (paste a category id)
+GET {{BaseURL}}/api/movies?category=000000000000000000000000
+
+### create a movie (admin only; Gemini generates synopsis + tags)
+POST {{BaseURL}}/api/movies
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "The Matrix"
+}
+
+### delete a movie (admin only; paste a movie id)
+DELETE {{BaseURL}}/api/movies/000000000000000000000000
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------- CATEGORIES -------------------------------
+
+### list categories
+GET {{BaseURL}}/api/categories
+
+### create category (admin only)
+POST {{BaseURL}}/api/categories
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "אקשן"
+}
+
+### delete category (admin only; paste a category id)
+DELETE {{BaseURL}}/api/categories/000000000000000000000000
+Authorization: Bearer {{adminToken}}
+
+### --------------------------------- RATINGS --------------------------------
+
+### rate a movie 1-5 (paste a movie id)
+POST {{BaseURL}}/api/movies/000000000000000000000000/rate
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "score": 5,
+  "reviewText": "מעולה!"
+}
+
+### delete my rating for a movie
+DELETE {{BaseURL}}/api/movies/000000000000000000000000/rate
+Authorization: Bearer {{userToken}}
+
+### my ratings map { itemId: score }
+GET {{BaseURL}}/api/ratings/me
+Authorization: Bearer {{userToken}}
+
+### -------------------------------- FAVORITES -------------------------------
+
+### add favorite
+POST {{BaseURL}}/api/movies/000000000000000000000000/favorite
+Authorization: Bearer {{userToken}}
+
+### remove favorite
+DELETE {{BaseURL}}/api/movies/000000000000000000000000/favorite
+Authorization: Bearer {{userToken}}
+
+### my favorites
+GET {{BaseURL}}/api/favorites
+Authorization: Bearer {{userToken}}
+
+### ----------------------------- RECOMMENDATIONS ----------------------------
+
+### personalized KNN feed (falls back to popular on cold start)
+GET {{BaseURL}}/api/recommendations
+Authorization: Bearer {{userToken}}
+
+### --------------------------------- PROFILE --------------------------------
+
+### my profile + stats + rating history
+GET {{BaseURL}}/api/profile
+Authorization: Bearer {{userToken}}
+
+### update my profile
+PUT {{BaseURL}}/api/profile
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "firstName": "אוהד",
+  "lastName": "כהן",
+  "phoneNumber": "052-0000000"
+}
+
+### ---------------------------------- USERS ---------------------------------
+
+### community users summary (KNN neighbor pool)
+GET {{BaseURL}}/api/users
+Authorization: Bearer {{userToken}}
+
+### ---------------------------------- ADMIN ---------------------------------
+
+### analytics dashboard (admin only)
+GET {{BaseURL}}/api/admin/stats
+Authorization: Bearer {{adminToken}}

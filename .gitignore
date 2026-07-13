@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+dist/
+.expo/
+build/
+
+# Environment configurations
+.env
+
+# Local system files
+.DS_Store
+Thumbs.db
