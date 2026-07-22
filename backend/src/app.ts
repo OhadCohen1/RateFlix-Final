@@ -29,7 +29,7 @@ app.use('/api', apiRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT ?? 5000;
+const PORT = process.env.PORT ?? 5050;
 
 // מעלים שרת ואז מתחברים ל-DB
 app.listen(PORT, async () => {
