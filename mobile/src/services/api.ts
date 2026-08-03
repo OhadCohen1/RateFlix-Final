@@ -8,7 +8,7 @@ const resolveHost = (): string => {
   return 'localhost';
 };
 
-export const API_BASE_URL = `http://${resolveHost()}:5050/api`;
+export const API_BASE_URL = `http://${resolveHost()}:5000/api`;
 
 // נשמר בזיכרון, נטען מ-AsyncStorage באתחול.
 let authToken: string | null = null;
