@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "b7e3a9d4-5c21-4f8e-9d02-rateflix2026",
     "name": "RateFlix API",
-    "description": "קולקציית בדיקות מלאה ל-REST API של RateFlix.\n\nהוראות הרצה:\n1. ודאו שהשרת רץ (npm run dev בתיקיית backend, פורט 5000)\n2. לחצו Run Collection - כל הבקשות רצות לפי הסדר, הטוקנים נלכדים אוטומטית וכל בקשה מאומתת בטסטים (סטטוס + מעטפת { success, data, timestamp })\n\nההרצה אידמפוטנטית: משתמש הבדיקה נרשם עם אימייל ייחודי, וכל דירוג/מועדף/סרט/קטגוריה שנוצרים - נמחקים בסוף. אפשר להריץ שוב ושוב.",
+    "description": "קולקציית בדיקות מלאה ל-REST API של RateFlix.\n לזוכר להריץ את השרת קודם כל ואז להריץ את הבדיקות ",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
