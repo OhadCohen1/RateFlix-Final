@@ -17,6 +17,7 @@ export interface ApiMovie {
   categoryId?: string;
   categoryName?: string;
   imageUrl?: string;
+  year?: number;
   tags?: string[];
   createdAt: string;
   avgRating?: number;

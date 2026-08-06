@@ -9,7 +9,7 @@ export const mapMovieToItem = (movie: ApiMovie): Item => ({
   categoryId: movie.categoryId,
   categoryName: movie.categoryName,
   imageUrl: movie.imageUrl,
-  year: movie.createdAt ? new Date(movie.createdAt).getFullYear() : undefined,
+  year: movie.year ?? (movie.createdAt ? new Date(movie.createdAt).getFullYear() : undefined),
   avgRating: movie.avgRating ?? 0,
   ratingCount: movie.ratingCount ?? 0,
   createdAt: movie.createdAt,

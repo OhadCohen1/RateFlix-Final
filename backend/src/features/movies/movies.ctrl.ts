@@ -67,6 +67,8 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
       enriched.sort((a, b) => b.ratingCount - a.ratingCount || b.avgRating - a.avgRating);
       break;
     case 'year':
+      enriched.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+      break;
     case 'newest':
     default:
       enriched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -81,15 +83,23 @@ interface CreateMovieBody {
   title?: string;
   description?: string;
   categoryId?: string;
+  year?: string;
 }
 
 // יצירת סרט חדש (אדמין).
 export const createMovie = async (req: Request, res: Response): Promise<void> => {
-  const { title, categoryId } = req.body as CreateMovieBody;
+  const { title, categoryId, year } = req.body as CreateMovieBody;
 
   if (!title) {
     throw new ApiError(400, 'title is required');
   }
+
+  // שנת יציאה אופציונלית; מתעלמים מערך לא תקין.
+  const parsedYear = year !== undefined ? Number(year) : undefined;
+  const validYear =
+    parsedYear !== undefined && Number.isInteger(parsedYear) && parsedYear >= 1888 && parsedYear <= 2100
+      ? parsedYear
+      : undefined;
 
   let imageUrl: string | undefined;
   if (req.file) {
@@ -122,7 +132,14 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
     console.warn(`Gemini metadata generation failed for "${title}": ${message}`);
   }
 
-  const movie = await Movie.create({ title, description, categoryId: validCategoryId, imageUrl, tags });
+  const movie = await Movie.create({
+    title,
+    description,
+    categoryId: validCategoryId,
+    imageUrl,
+    year: validYear,
+    tags,
+  });
 
   // מחזירים גם שם קטגוריה לרינדור מיידי בצד לקוח.
   const category = validCategoryId ? await Category.findById(validCategoryId) : null;

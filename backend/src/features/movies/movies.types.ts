@@ -5,6 +5,7 @@ export interface IMovie {
   description?: string;
   categoryId?: Types.ObjectId;
   imageUrl?: string;
+  year?: number;
   tags: string[];
   createdAt: Date;
 }

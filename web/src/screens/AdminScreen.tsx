@@ -189,6 +189,7 @@ const StatsTab = () => {
 
 const CreateMovieTab = () => {
   const [title, setTitle] = useState('');
+  const [year, setYear] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -223,6 +224,7 @@ const CreateMovieTab = () => {
     // שולחים multipart: שדות טקסט + קובץ image.
     const formData = new FormData();
     formData.append('title', title.trim());
+    if (year.trim()) formData.append('year', year.trim());
     if (categoryId) formData.append('categoryId', categoryId);
     if (imageFile) formData.append('image', imageFile);
 
@@ -231,6 +233,7 @@ const CreateMovieTab = () => {
       const movie = await createMovie(formData);
       setCreated(movie);
       setTitle('');
+      setYear('');
       setCategoryId('');
       setImageFile(null);
       setImagePreview('');
@@ -254,6 +257,14 @@ const CreateMovieTab = () => {
           onChange={(e) => setTitle(e.target.value)}
           error={titleError}
           placeholder="למשל: Inception"
+        />
+
+        <InputField
+          label="שנת יציאה (אופציונלי)"
+          type="number"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          placeholder="למשל: 2014"
         />
 
         <div className="flex flex-col gap-1.5">

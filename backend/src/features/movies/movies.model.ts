@@ -19,6 +19,11 @@ const movieSchema = new Schema<IMovie>({
     type: String,
     trim: true,
   },
+  year: {
+    type: Number,
+    min: 1888,
+    max: 2100,
+  },
   tags: {
     type: [String],
     default: [],
